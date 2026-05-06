@@ -1,0 +1,603 @@
+{
+	"info": {
+		"_postman_id": "2b3d5faf-9189-406f-9d8b-fa9cbc25002b",
+		"name": "DummyJSON",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34871781"
+	},
+	"item": [
+		{
+			"name": "Ex 1_Exploring the Products API",
+			"item": [
+				{
+					"name": "Endpoint",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}",
+							"host": [
+								"{{BaseURL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Single product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products/1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Limit products to 5",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products?limit=5&skip;=10",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "skip;",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Assertion\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Product Array is not empty\", function () {\r",
+									"    pm.expect(pm.response.json().products).to.not.be.empty;\r",
+									"});\r",
+									"pm.test(\"All titles contain phone\", function () {\r",
+									"    pm.expect(pm.response.json().products).to.satisfy((products) => {\r",
+									"        return products.every(product => product.title.toLowerCase().includes('phone'));\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products/search?q=phone",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "phone"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "1. Send GET [https://dummyjson.com/products](https://dummyjson.com/products) — observe the response structure.\n    \n2. Send GET [https://dummyjson.com/products/1](https://dummyjson.com/products/1) — what fields does a single product have?\n    \n3. Add ?select=id,title,price,stock to the URL — verify only those fields return.\n    \n4. Try ?limit=5&skip;=10 — verify you get 5 products starting from the 11th.\n    \n5. Search for 'phone': GET [https://dummyjson.com/products/search?q=phone](https://dummyjson.com/products/search?q=phone)\n    \n6. Assert: status is 200, products array is not empty, all titles contain 'phone'.  \n    Goal: Goal: Understand GET requests, query parameters, and field selection.  \n    Exercise"
+		},
+		{
+			"name": "Ex 2_Test Status Codes Systematically",
+			"item": [
+				{
+					"name": "Response Time",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products/1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Error Message",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products/99999",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products",
+								"99999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Neutral Integer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products/0",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products",
+								"0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negative ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products/-1",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products",
+								"-1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Non-numeric ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products/abc",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products",
+								"abc"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "1. GET /products/1 ® expect 200. Capture response time.\n    \n2. GET /products/99999 ® expect 404. Read the error message.\n    \n3. GET /products/0 ® what happens? Is 0 a valid ID?\n    \n4. GET /products/-1 ® negative ID. What status code and message?\n    \n5. GET /products/abc ® non-numeric ID. What status code?\n    \n6. Document each result in a table: endpoint, expected code, actual code, notes.  \n    n Goal: Goal: Learn to test boundary and invalid inputs systematically."
+		},
+		{
+			"name": "Ex 4_ Authentication Flow",
+			"item": [
+				{
+					"name": "Login_Valid credential",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"username\":\"emilys\",\r\n\"password\":\"emilyspass\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}//auth/login",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify user Data with Auth_accesstoken",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/auth/me",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify user Data with no Auth",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/auth/me",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify user Data with Auth_badtoken",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/auth/me",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login_Invalid password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"username\":\"emilys\",\r\n\"password\":\"wrongpass\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}//auth/login",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"username\":\"emilys\",\r\n\"password\":\"emilyspass\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}//auth/refresh",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "1. POST /auth/login with body {\"username\":\"emilys\",\"password\":\"emilyspass\"}\n    \n2. Save the accessToken from the response as a Postman variable: {{accessToken}}\n    \n3. GET /auth/me with header Authorization: Bearer {{accessToken}} — verify user data.\n    \n4. Try GET /auth/me with NO Authorization header — expect 401.\n    \n5. Try GET /auth/me with Authorization: Bearer badtoken123 — expect 401.\n    \n6. Try POST /auth/login with wrong password 'wrongpass' — document the error response.\n    \n7. POST /auth/refresh with the refreshToken — get a new accessToken.  \n    Goal: Goal: Understand JWT auth flow and test all authentication scenarios."
+		},
+		{
+			"name": "Ex 5_ Pagination Deep Dive",
+			"item": [
+				{
+					"name": "Total",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/users?limit=10&skip;=0",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "skip;",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Page 2",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/users?limit=10&skip;=10",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "skip;",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Last page_Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products?limit=10&skip;=200",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "skip;",
+									"value": "200"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Limit 0",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products?limit=0",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Limit 200",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let res = pm.response.json();\r",
+									"let skip = res.skip;\r",
+									"let count = res.products.length;\r",
+									"let total = res.total;\r",
+									"\r",
+									"pm.test(\"Last page exact match\", function () {\r",
+									"    pm.expect(skip + count).to.eql(total);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/products?limit=200",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "200"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "1. GET /users with ?limit=10&skip;=0 — note total in response.\n    \n2. Calculate how many pages exist: Math.ceil(total / 10).\n    \n3. Request page 2: ?limit=10&skip;=10. Verify first ID is different from page 1.\n    \n4. Request the last page — verify products.length may be less than limit.\n    \n5. Try ?limit=0 — what happens? Read DummyJSON docs to understand.\n    \n6. Try ?limit=200 — does it return more than the total? What does limit mean here?\n    \n7. Assert: skip + products.length never exceeds total.  \n    n Goal: Goal: Master pagination testing and boundary conditions."
+		}
+	],
+	"auth": {
+		"type": "bearer"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseURL",
+			"value": "https://dummyjson.com",
+			"type": "default"
+		},
+		{
+			"key": "access Token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJlbWlseXMiLCJlbWFpbCI6ImVtaWx5LmpvaG5zb25AeC5kdW1teWpzb24uY29tIiwiZmlyc3ROYW1lIjoiRW1pbHkiLCJsYXN0TmFtZSI6IkpvaG5zb24iLCJnZW5kZXIiOiJmZW1hbGUiLCJpbWFnZSI6Imh0dHBzOi8vZHVtbXlqc29uLmNvbS9pY29uL2VtaWx5cy8xMjgiLCJpYXQiOjE3NzgwOTgxOTUsImV4cCI6MTc3ODEwMTc5NX0.sF-OJkTzJfRpGBSC8oD8DSDRxwobisN9eet3WX_U5k8",
+			"type": "default"
+		},
+		{
+			"key": "access Token2",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJlbWlseXMiLCJlbWFpbCI6ImVtaWx5LmpvaG5zb25AeC5kdW1teWpzb24uY29tIiwiZmlyc3ROYW1lIjoiRW1pbHkiLCJsYXN0TmFtZSI6IkpvaG5zb24iLCJnZW5kZXIiOiJmZW1hbGUiLCJpbWFnZSI6Imh0dHBzOi8vZHVtbXlqc29uLmNvbS9pY29uL2VtaWx5cy8xMjgiLCJpYXQiOjE3NzgwOTg0MjQsImV4cCI6MTc3ODEwMjAyNH0.oQvYyoCIDeiLa8eiXzXb7AkfGNgzWvCvpDbZOod5ezs",
+			"type": "default"
+		}
+	]
+}
