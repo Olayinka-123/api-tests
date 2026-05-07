@@ -1,0 +1,20 @@
+
+name: API Tests with Newman
+on:
+pull_request:
+branches: [main, develop]
+jobs:
+api-tests:
+runs-on: ubuntu-latest
+steps:
+- uses: actions/checkout@v4
+- name: Install Newman
+run: npm install -g newman newman-reporter-html
+-name: Run API Collection
+run: newman run collections/DummyJSON.postman_collection.json --environment envs/staging.json --reporters cli,html,junit --reporter-html-export reports/api-report.html
+- name: Upload Report
+uses: actions/upload-artifact@v4
+if: always()
+with:
+name: newman-api-report
+path: reports/
