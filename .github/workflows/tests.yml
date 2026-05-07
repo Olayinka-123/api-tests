@@ -25,6 +25,29 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Newman and HTML reporter
+        run: npm install -g newman newman-reporter-html
+
+      - name: Run Postman tests
+        run: |
+          newman run postman_collection.json \
+            -r cli,html \
+            --reporter-html-export newman-report.html
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-html-report
+          path: newman-report.html
+
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
